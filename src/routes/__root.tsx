@@ -17,7 +17,7 @@ import { Header } from "@/components/layout/Header";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import { Toaster } from "@/components/ui/sonner";
 
-const PUBLIC_PATHS = ["/", "/signup"];
+const PUBLIC_PATHS = new Set(["/", "/signup"]);
 
 function AuthGuard({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -26,9 +26,9 @@ function AuthGuard({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (loading) return;
-    const isPublic = PUBLIC_PATHS.some((p) => location.pathname.startsWith(p));
+    const isPublic = location.pathname === "/" || PUBLIC_PATHS.has(location.pathname) || [...PUBLIC_PATHS].some((p) => p !== "/" && location.pathname.startsWith(p));
     if (!user && !isPublic) {
-      router.navigate({ to: "/login", replace: true });
+      router.navigate({ to: "/", replace: true });
     }
   }, [user, loading, location.pathname]);
 
@@ -141,7 +141,7 @@ function RootShell({ children }: { children: ReactNode }) {
 function AppShell() {
   const { user } = useAuth();
   const location = useLocation();
-  const isPublic = PUBLIC_PATHS.some((p) => location.pathname.startsWith(p));
+  const isPublic = location.pathname === "/" || PUBLIC_PATHS.has(location.pathname) || [...PUBLIC_PATHS].some((p) => p !== "/" && location.pathname.startsWith(p));
 
   if (isPublic) {
     return <Outlet />;
