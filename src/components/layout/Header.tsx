@@ -1,18 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
-import { Bell, Search, Plus } from "lucide-react";
+import { Bell, Search, Plus, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { apiFetch } from "@/services/api";
+import { useAuth } from "@/lib/auth";
+import { useNavigate } from "@tanstack/react-router";
 
 export function Header() {
-  const { data: agent } = useQuery({
-    queryKey: ["agent"],
-    queryFn: () => apiFetch<{ name: string; organization: string }>("/agent"),
-  });
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const name = user?.fullName ?? "Agent";
+  const org = user?.organization ?? "";
 
-  const name = agent?.name ?? "Brian Otieno";
-  const org = agent?.organization ?? "DigiCow";
+  const handleLogout = () => {
+    logout();
+    navigate({ to: "/login", replace: true });
+  };
 
   return (
     <header className="sticky top-0 z-30 h-16 border-b border-border bg-background/90 backdrop-blur">
@@ -39,8 +41,11 @@ export function Header() {
             </Avatar>
             <div className="hidden md:block leading-tight">
               <div className="text-sm font-medium">{name}</div>
-              <div className="text-[11px] text-muted-foreground">{org}</div>
+              {org && <div className="text-[11px] text-muted-foreground">{org}</div>}
             </div>
+            <Button variant="ghost" size="icon" onClick={handleLogout} className="ml-1" title="Sign out">
+              <LogOut className="size-4" />
+            </Button>
           </div>
         </div>
       </div>

@@ -144,7 +144,7 @@ CREATE (agent1:ExtensionAgent {
   phone: '+254 712 345 678',
   organization: 'DigiCow',
   county: 'Nakuru',
-  passwordHash: '$2b$12$LJ3m4ys3Lk0TSwHnbfOMiOXPm1Qlq5Gz0G0Oy.Rq0B6iB3n0v7x7e'
+  passwordHash: '$2b$12$/DhwVIKNj4uEb/fTsYasVu4k6YqmWvuIHLh.01I64hnI8dMmCaDOu'
 });
 
 CREATE (agent2:ExtensionAgent {
@@ -154,7 +154,7 @@ CREATE (agent2:ExtensionAgent {
   email: 'mary.njeri@digicow.co.ke',
   organization: 'DigiCow',
   county: 'Kiambu',
-  passwordHash: '$2b$12$LJ3m4ys3Lk0TSwHnbfOMiOXPm1Qlq5Gz0G0Oy.Rq0B6iB3n0v7x7e'
+  passwordHash: '$2b$12$/DhwVIKNj4uEb/fTsYasVu4k6YqmWvuIHLh.01I64hnI8dMmCaDOu'
 });
 
 // =====================================================================

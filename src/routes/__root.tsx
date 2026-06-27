@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useLocation,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -13,6 +14,33 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Sidebar, MobileNav } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
+import { AuthProvider, useAuth } from "@/lib/auth";
+
+const PUBLIC_PATHS = ["/login", "/signup"];
+
+function AuthGuard({ children }: { children: ReactNode }) {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (loading) return;
+    const isPublic = PUBLIC_PATHS.some(p => location.pathname.startsWith(p));
+    if (!user && !isPublic) {
+      router.navigate({ to: "/login", replace: true });
+    }
+  }, [user, loading, location.pathname]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <p className="text-sm text-muted-foreground">Loading...</p>
+      </div>
+    );
+  }
+
+  return <>{children}</>;
+}
 
 function NotFoundComponent() {
   return (
@@ -79,14 +107,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { title: "CowSense AI" },
+      { name: "description", content: "AI-powered dairy extension intelligence" },
     ],
     links: [
       {
@@ -115,21 +137,39 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function AppShell() {
+  const { user } = useAuth();
+  const location = useLocation();
+  const isPublic = PUBLIC_PATHS.some(p => location.pathname.startsWith(p));
+
+  if (isPublic) {
+    return <Outlet />;
+  }
+
+  return (
+    <div className="flex min-h-screen w-full bg-background">
+      <Sidebar />
+      <div className="flex-1 min-w-0 flex flex-col">
+        <Header />
+        <main className="flex-1 min-w-0">
+          <Outlet />
+        </main>
+      </div>
+      <MobileNav />
+    </div>
+  );
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-screen w-full bg-background">
-        <Sidebar />
-        <div className="flex-1 min-w-0 flex flex-col">
-          <Header />
-          <main className="flex-1 min-w-0">
-            <Outlet />
-          </main>
-        </div>
-        <MobileNav />
-      </div>
+      <AuthProvider>
+        <AuthGuard>
+          <AppShell />
+        </AuthGuard>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

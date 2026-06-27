@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as VisitsRouteImport } from './routes/visits'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RecommendationsRouteImport } from './routes/recommendations'
@@ -21,6 +23,16 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as FarmersIndexRouteImport } from './routes/farmers.index'
 import { Route as FarmersIdRouteImport } from './routes/farmers.$id'
 
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VisitsRoute = VisitsRouteImport.update({
   id: '/visits',
   path: '/visits',
@@ -84,8 +96,10 @@ export interface FileRoutesByFullPath {
   '/follow-ups': typeof FollowUpsRoute
   '/inputs': typeof InputsRoute
   '/intelligence': typeof IntelligenceRoute
+  '/login': typeof LoginRoute
   '/recommendations': typeof RecommendationsRoute
   '/settings': typeof SettingsRoute
+  '/signup': typeof SignupRoute
   '/visits': typeof VisitsRoute
   '/farmers/$id': typeof FarmersIdRoute
   '/farmers/': typeof FarmersIndexRoute
@@ -96,8 +110,10 @@ export interface FileRoutesByTo {
   '/follow-ups': typeof FollowUpsRoute
   '/inputs': typeof InputsRoute
   '/intelligence': typeof IntelligenceRoute
+  '/login': typeof LoginRoute
   '/recommendations': typeof RecommendationsRoute
   '/settings': typeof SettingsRoute
+  '/signup': typeof SignupRoute
   '/visits': typeof VisitsRoute
   '/farmers/$id': typeof FarmersIdRoute
   '/farmers': typeof FarmersIndexRoute
@@ -110,8 +126,10 @@ export interface FileRoutesById {
   '/follow-ups': typeof FollowUpsRoute
   '/inputs': typeof InputsRoute
   '/intelligence': typeof IntelligenceRoute
+  '/login': typeof LoginRoute
   '/recommendations': typeof RecommendationsRoute
   '/settings': typeof SettingsRoute
+  '/signup': typeof SignupRoute
   '/visits': typeof VisitsRoute
   '/farmers/$id': typeof FarmersIdRoute
   '/farmers/': typeof FarmersIndexRoute
@@ -125,8 +143,10 @@ export interface FileRouteTypes {
     | '/follow-ups'
     | '/inputs'
     | '/intelligence'
+    | '/login'
     | '/recommendations'
     | '/settings'
+    | '/signup'
     | '/visits'
     | '/farmers/$id'
     | '/farmers/'
@@ -137,8 +157,10 @@ export interface FileRouteTypes {
     | '/follow-ups'
     | '/inputs'
     | '/intelligence'
+    | '/login'
     | '/recommendations'
     | '/settings'
+    | '/signup'
     | '/visits'
     | '/farmers/$id'
     | '/farmers'
@@ -150,8 +172,10 @@ export interface FileRouteTypes {
     | '/follow-ups'
     | '/inputs'
     | '/intelligence'
+    | '/login'
     | '/recommendations'
     | '/settings'
+    | '/signup'
     | '/visits'
     | '/farmers/$id'
     | '/farmers/'
@@ -164,13 +188,29 @@ export interface RootRouteChildren {
   FollowUpsRoute: typeof FollowUpsRoute
   InputsRoute: typeof InputsRoute
   IntelligenceRoute: typeof IntelligenceRoute
+  LoginRoute: typeof LoginRoute
   RecommendationsRoute: typeof RecommendationsRoute
   SettingsRoute: typeof SettingsRoute
+  SignupRoute: typeof SignupRoute
   VisitsRoute: typeof VisitsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/visits': {
       id: '/visits'
       path: '/visits'
@@ -271,8 +311,10 @@ const rootRouteChildren: RootRouteChildren = {
   FollowUpsRoute: FollowUpsRoute,
   InputsRoute: InputsRoute,
   IntelligenceRoute: IntelligenceRoute,
+  LoginRoute: LoginRoute,
   RecommendationsRoute: RecommendationsRoute,
   SettingsRoute: SettingsRoute,
+  SignupRoute: SignupRoute,
   VisitsRoute: VisitsRoute,
 }
 export const routeTree = rootRouteImport

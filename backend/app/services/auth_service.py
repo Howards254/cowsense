@@ -39,7 +39,12 @@ def decode_token(token: str) -> str | None:
 def get_agent_by_email(email: str) -> dict | None:
     query = "MATCH (a:ExtensionAgent {email: $email}) RETURN {agentId: a.agentId, fullName: a.fullName, email: a.email, phone: a.phone, organization: a.organization, county: a.county, passwordHash: a.passwordHash} AS result"
     result = run_query(query, {"email": email})
-    return result[0]["result"] if result else None
+    if result:
+        agent = result[0]["result"]
+        if not agent.get("phone"):
+            agent["phone"] = ""
+        return agent
+    return None
 
 
 def get_agent_by_id(agent_id: str) -> dict | None:
@@ -60,7 +65,7 @@ def create_agent(agent_id: str, full_name: str, email: str, phone: str, organiza
       county: $county,
       passwordHash: $passwordHash
     })
-    RETURN {agentId: a.agentId, fullName: a.fullName, email: a.email, organization: a.organization, county: a.county} AS result
+    RETURN {agentId: a.agentId, fullName: a.fullName, email: a.email, phone: a.phone, organization: a.organization, county: a.county} AS result
     """
     result = run_query(query, {
         "agentId": agent_id,

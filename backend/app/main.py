@@ -14,6 +14,20 @@ from app.schemas import DashboardStatsSchema
 
 app = FastAPI(title="CowSense AI")
 
+
+@app.on_event("startup")
+def patch_demo_users():
+    from app.services.neo4j_service import run_query
+    from app.services.auth_service import hash_password
+    demo_pw = hash_password("cowsense123")
+    run_query("""
+        MATCH (a:ExtensionAgent)
+        WHERE a.passwordHash IS NULL
+        SET a.passwordHash = $hash
+        RETURN count(a) AS patched
+    """, {"hash": demo_pw})
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
