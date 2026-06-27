@@ -16,6 +16,7 @@ dist-ssr
 .nitro
 *.local
 backend/.env
+ARCHITECTURE.md
 
 # Wrangler / Cloudflare
 .wrangler/
