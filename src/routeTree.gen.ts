@@ -13,11 +13,11 @@ import { Route as VisitsRouteImport } from './routes/visits'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RecommendationsRouteImport } from './routes/recommendations'
-import { Route as LoginRouteImport } from './routes/login'
 import { Route as IntelligenceRouteImport } from './routes/intelligence'
 import { Route as InputsRouteImport } from './routes/inputs'
 import { Route as FollowUpsRouteImport } from './routes/follow-ups'
 import { Route as FarmersRouteImport } from './routes/farmers'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FarmersIndexRouteImport } from './routes/farmers.index'
@@ -43,11 +43,6 @@ const RecommendationsRoute = RecommendationsRouteImport.update({
   path: '/recommendations',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IntelligenceRoute = IntelligenceRouteImport.update({
   id: '/intelligence',
   path: '/intelligence',
@@ -66,6 +61,11 @@ const FollowUpsRoute = FollowUpsRouteImport.update({
 const FarmersRoute = FarmersRouteImport.update({
   id: '/farmers',
   path: '/farmers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AnalyticsRoute = AnalyticsRouteImport.update({
@@ -92,11 +92,11 @@ const FarmersIdRoute = FarmersIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
+  '/dashboard': typeof DashboardRoute
   '/farmers': typeof FarmersRouteWithChildren
   '/follow-ups': typeof FollowUpsRoute
   '/inputs': typeof InputsRoute
   '/intelligence': typeof IntelligenceRoute
-  '/login': typeof LoginRoute
   '/recommendations': typeof RecommendationsRoute
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
@@ -107,10 +107,10 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
+  '/dashboard': typeof DashboardRoute
   '/follow-ups': typeof FollowUpsRoute
   '/inputs': typeof InputsRoute
   '/intelligence': typeof IntelligenceRoute
-  '/login': typeof LoginRoute
   '/recommendations': typeof RecommendationsRoute
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
@@ -122,11 +122,11 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
+  '/dashboard': typeof DashboardRoute
   '/farmers': typeof FarmersRouteWithChildren
   '/follow-ups': typeof FollowUpsRoute
   '/inputs': typeof InputsRoute
   '/intelligence': typeof IntelligenceRoute
-  '/login': typeof LoginRoute
   '/recommendations': typeof RecommendationsRoute
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
@@ -139,11 +139,11 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/analytics'
+    | '/dashboard'
     | '/farmers'
     | '/follow-ups'
     | '/inputs'
     | '/intelligence'
-    | '/login'
     | '/recommendations'
     | '/settings'
     | '/signup'
@@ -154,10 +154,10 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/analytics'
+    | '/dashboard'
     | '/follow-ups'
     | '/inputs'
     | '/intelligence'
-    | '/login'
     | '/recommendations'
     | '/settings'
     | '/signup'
@@ -168,11 +168,11 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/analytics'
+    | '/dashboard'
     | '/farmers'
     | '/follow-ups'
     | '/inputs'
     | '/intelligence'
-    | '/login'
     | '/recommendations'
     | '/settings'
     | '/signup'
@@ -184,11 +184,11 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnalyticsRoute: typeof AnalyticsRoute
+  DashboardRoute: typeof DashboardRoute
   FarmersRoute: typeof FarmersRouteWithChildren
   FollowUpsRoute: typeof FollowUpsRoute
   InputsRoute: typeof InputsRoute
   IntelligenceRoute: typeof IntelligenceRoute
-  LoginRoute: typeof LoginRoute
   RecommendationsRoute: typeof RecommendationsRoute
   SettingsRoute: typeof SettingsRoute
   SignupRoute: typeof SignupRoute
@@ -225,13 +225,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RecommendationsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/intelligence': {
       id: '/intelligence'
       path: '/intelligence'
@@ -258,6 +251,13 @@ declare module '@tanstack/react-router' {
       path: '/farmers'
       fullPath: '/farmers'
       preLoaderRoute: typeof FarmersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/analytics': {
@@ -307,11 +307,11 @@ const FarmersRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyticsRoute: AnalyticsRoute,
+  DashboardRoute: DashboardRoute,
   FarmersRoute: FarmersRouteWithChildren,
   FollowUpsRoute: FollowUpsRoute,
   InputsRoute: InputsRoute,
   IntelligenceRoute: IntelligenceRoute,
-  LoginRoute: LoginRoute,
   RecommendationsRoute: RecommendationsRoute,
   SettingsRoute: SettingsRoute,
   SignupRoute: SignupRoute,

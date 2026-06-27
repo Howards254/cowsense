@@ -2,6 +2,9 @@
 
 **AI-powered extension intelligence for Kenyan dairy farmers.**
 
+[![Frontend](https://img.shields.io/badge/Live_App-cowsense.vercel.app-0F766E?style=flat-square)](https://cowsense.vercel.app)
+[![Backend](https://img.shields.io/badge/API-cowsense--backend.onrender.com-84CC16?style=flat-square)](https://cowsense-backend.onrender.com)
+
 CowSense AI helps extension agents manage smallholder dairy farmers through AI-driven prioritization, recommendation generation, input demand tracking, and field visit planning — all powered by a Neo4j graph database and LLM-enhanced reasoning.
 
 ---
@@ -38,7 +41,11 @@ CowSense AI helps extension agents manage smallholder dairy farmers through AI-d
 
 ## Quick Start
 
-### Prerequisites
+### Try the live demo
+
+Visit **[https://cowsense.vercel.app](https://cowsense.vercel.app)** and sign in with the demo credentials below. No setup required.
+
+### Prerequisites (for local development)
 
 - Node.js 20+
 - Python 3.12+
@@ -123,9 +130,13 @@ npm run dev
 
 Open `http://localhost:5173`
 
+The production app is deployed at **[https://cowsense.vercel.app](https://cowsense.vercel.app)** with the backend at **[https://cowsense-backend.onrender.com](https://cowsense-backend.onrender.com)**.
+
 ---
 
 ## Demo Credentials
+
+Use these to sign in at **[https://cowsense.vercel.app](https://cowsense.vercel.app)**:
 
 | Field | Value |
 |---|---|

@@ -17,7 +17,7 @@ import { Header } from "@/components/layout/Header";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import { Toaster } from "@/components/ui/sonner";
 
-const PUBLIC_PATHS = ["/login", "/signup"];
+const PUBLIC_PATHS = ["/", "/signup"];
 
 function AuthGuard({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
