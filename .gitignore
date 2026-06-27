@@ -17,10 +17,14 @@ dist-ssr
 *.local
 backend/.env
 ARCHITECTURE.md
+DEPLOYMENT.md
 
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars
+
+# Vercel build output
+.vercel/
 
 # Editor directories and files
 .vscode/*
