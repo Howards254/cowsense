@@ -63,16 +63,15 @@ export function Sidebar() {
 
 export function MobileNav() {
   const pathname = useRouterState({ select: s => s.location.pathname });
-  const items = nav.slice(0, 5);
   return (
-    <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border bg-background/95 backdrop-blur">
-      <div className="grid grid-cols-5">
-        {items.map(item => {
+    <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border bg-background/95 backdrop-blur overflow-x-auto">
+      <div className="flex min-w-max">
+        {nav.map(item => {
           const active = item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
           const Icon = item.icon;
           return (
             <Link key={item.to} to={item.to} className={cn(
-              "flex flex-col items-center gap-1 py-2 text-[10px]",
+              "flex flex-col items-center gap-1 py-2 px-3 text-[10px] min-w-[60px]",
               active ? "text-primary" : "text-muted-foreground"
             )}>
               <Icon className="size-5" />

@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, useLoaderData } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Droplets, AlertTriangle, ClipboardList, Activity } from "lucide-react";
 import { LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
@@ -13,6 +13,7 @@ import { visitService } from "@/services/visitService";
 import { recommendationService } from "@/services/recommendationService";
 import { formatDate, relativeDay } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import type { Farmer } from "@/types";
 
 export const Route = createFileRoute("/farmers/$id")({
   head: ({ params }) => ({ meta: [{ title: `Farmer · CowSense AI` }] }),
@@ -29,7 +30,7 @@ export const Route = createFileRoute("/farmers/$id")({
 const tabs = ["Overview", "Herd", "Issues", "Recommendations", "Follow Ups", "History"] as const;
 
 function FarmerProfile() {
-  const farmer = Route.useLoaderData();
+  const farmer = Route.useLoaderData() as Farmer;
   const [tab, setTab] = useState<typeof tabs[number]>("Overview");
   const { data: recommendations = [] } = useQuery({ queryKey: ["recommendations"], queryFn: () => recommendationService.list() });
   const { data: followUps = [] } = useQuery({ queryKey: ["followups"], queryFn: () => followupService.list() });

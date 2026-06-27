@@ -1,8 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from app.services.neo4j_service import load_query, run_query_flattened
 from app.schemas import FarmerListItem, FarmerDetail
+from app.api.deps import require_agent
 
-router = APIRouter(prefix="/api/farmers", tags=["farmers"])
+router = APIRouter(prefix="/api/farmers", tags=["farmers"], dependencies=[Depends(require_agent)])
 
 
 @router.get("")

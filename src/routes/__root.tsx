@@ -15,6 +15,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Sidebar, MobileNav } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 import { AuthProvider, useAuth } from "@/lib/auth";
+import { Toaster } from "@/components/ui/sonner";
 
 const PUBLIC_PATHS = ["/login", "/signup"];
 
@@ -25,7 +26,7 @@ function AuthGuard({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (loading) return;
-    const isPublic = PUBLIC_PATHS.some(p => location.pathname.startsWith(p));
+    const isPublic = PUBLIC_PATHS.some((p) => location.pathname.startsWith(p));
     if (!user && !isPublic) {
       router.navigate({ to: "/login", replace: true });
     }
@@ -140,7 +141,7 @@ function RootShell({ children }: { children: ReactNode }) {
 function AppShell() {
   const { user } = useAuth();
   const location = useLocation();
-  const isPublic = PUBLIC_PATHS.some(p => location.pathname.startsWith(p));
+  const isPublic = PUBLIC_PATHS.some((p) => location.pathname.startsWith(p));
 
   if (isPublic) {
     return <Outlet />;
@@ -170,6 +171,7 @@ function RootComponent() {
           <AppShell />
         </AuthGuard>
       </AuthProvider>
+      <Toaster />
     </QueryClientProvider>
   );
 }

@@ -75,6 +75,7 @@ MERGE (:Input {inputId: 'inp-3', name: 'FMD Vaccine', category: 'vaccine', unit:
 MERGE (:Input {inputId: 'inp-4', name: 'Dairy Meal (70kg)', category: 'feed', unit: 'bag', estimatedCostKes: 3200});
 MERGE (:Input {inputId: 'inp-5', name: 'Mineral Supplement', category: 'supplement', unit: 'kg', estimatedCostKes: 450});
 MERGE (:Input {inputId: 'inp-6', name: 'Deworming Bolus', category: 'vaccine', unit: 'dose', estimatedCostKes: 180});
+MERGE (:Input {inputId: 'inp-7', name: 'Water Storage Tank (1000L)', category: 'equipment', unit: 'unit', estimatedCostKes: 4500});
 
 // =====================================================================
 // 7. RECOMMENDATIONS
@@ -121,6 +122,17 @@ CREATE (rec4:Recommendation {
   expectedOutcome: 'Herd-level immunity restored before rainy season',
   farmerCount: 1,
   issuedAt: '2026-06-24'
+});
+
+CREATE (rec5:Recommendation {
+  recommendationId: 'rec-5',
+  title: 'Schedule Artificial Insemination',
+  reasoning: 'Extended breeding interval detected. Timely AI service will reduce calving gap and improve herd productivity.',
+  priority: 'medium',
+  status: 'pending',
+  expectedOutcome: 'Reduced calving interval; pregnancy within 60 days',
+  farmerCount: 1,
+  issuedAt: '2026-06-25'
 });
 
 // =====================================================================
@@ -507,6 +519,10 @@ MERGE (f)-[:EXPERIENCING {severity: 'medium', status: 'in_progress', detectedAt:
 MATCH (f:Farmer {farmerId: 'f-6'}), (i:Issue {issueId: 'i-10'})
 MERGE (f)-[:EXPERIENCING {severity: 'medium', status: 'open', detectedAt: date('2026-06-23')}]->(i);
 
+// David: Low Feed Quality
+MATCH (f:Farmer {farmerId: 'f-5'}), (i:Issue {issueId: 'i-7'})
+MERGE (f)-[:EXPERIENCING {severity: 'low', status: 'open', detectedAt: date('2026-06-26')}]->(i);
+
 // =====================================================================
 // 22. RELATIONSHIPS — Farmer → Disease (AT_RISK_OF)
 // =====================================================================
@@ -525,6 +541,8 @@ MATCH (f:Farmer {farmerId: 'f-1'}), (r:Recommendation {recommendationId: 'rec-2'
 MATCH (f:Farmer {farmerId: 'f-2'}), (r:Recommendation {recommendationId: 'rec-4'}) MERGE (f)-[:HAS_RECOMMENDATION]->(r);
 MATCH (f:Farmer {farmerId: 'f-3'}), (r:Recommendation {recommendationId: 'rec-3'}) MERGE (f)-[:HAS_RECOMMENDATION]->(r);
 MATCH (f:Farmer {farmerId: 'f-4'}), (r:Recommendation {recommendationId: 'rec-1'}) MERGE (f)-[:HAS_RECOMMENDATION]->(r);
+MATCH (f:Farmer {farmerId: 'f-5'}), (r:Recommendation {recommendationId: 'rec-1'}) MERGE (f)-[:HAS_RECOMMENDATION]->(r);
+MATCH (f:Farmer {farmerId: 'f-6'}), (r:Recommendation {recommendationId: 'rec-5'}) MERGE (f)-[:HAS_RECOMMENDATION]->(r);
 
 // =====================================================================
 // 24. RELATIONSHIPS — Issue → Recommendation (SUGGESTS)
@@ -533,6 +551,8 @@ MATCH (i:Issue {issueId: 'i-2'}), (r:Recommendation {recommendationId: 'rec-1'})
 MATCH (i:Issue {issueId: 'i-1'}), (r:Recommendation {recommendationId: 'rec-2'}) MERGE (i)-[:SUGGESTS]->(r);
 MATCH (i:Issue {issueId: 'i-4'}), (r:Recommendation {recommendationId: 'rec-3'}) MERGE (i)-[:SUGGESTS]->(r);
 MATCH (i:Issue {issueId: 'i-3'}), (r:Recommendation {recommendationId: 'rec-4'}) MERGE (i)-[:SUGGESTS]->(r);
+MATCH (i:Issue {issueId: 'i-10'}), (r:Recommendation {recommendationId: 'rec-5'}) MERGE (i)-[:SUGGESTS]->(r);
+MATCH (i:Issue {issueId: 'i-7'}), (r:Recommendation {recommendationId: 'rec-1'}) MERGE (i)-[:SUGGESTS]->(r);
 
 // =====================================================================
 // 25. RELATIONSHIPS — Recommendation → Input
@@ -542,6 +562,8 @@ MATCH (r:Recommendation {recommendationId: 'rec-1'}), (i:Input {inputId: 'inp-2'
 MATCH (r:Recommendation {recommendationId: 'rec-2'}), (i:Input {inputId: 'inp-4'}) MERGE (r)-[:REQUIRES]->(i);
 MATCH (r:Recommendation {recommendationId: 'rec-2'}), (i:Input {inputId: 'inp-5'}) MERGE (r)-[:REQUIRES]->(i);
 MATCH (r:Recommendation {recommendationId: 'rec-4'}), (i:Input {inputId: 'inp-3'}) MERGE (r)-[:REQUIRES]->(i);
+MATCH (r:Recommendation {recommendationId: 'rec-3'}), (i:Input {inputId: 'inp-7'}) MERGE (r)-[:REQUIRES]->(i);
+MATCH (r:Recommendation {recommendationId: 'rec-5'}), (i:Input {inputId: 'inp-6'}) MERGE (r)-[:REQUIRES]->(i);
 
 // =====================================================================
 // 26. RELATIONSHIPS — Farmer → FollowUp
@@ -560,6 +582,7 @@ MATCH (r:Recommendation {recommendationId: 'rec-4'}), (fu:FollowUp {followUpId: 
 MATCH (r:Recommendation {recommendationId: 'rec-2'}), (fu:FollowUp {followUpId: 'fu-2'}) MERGE (r)-[:TRACKED_BY]->(fu);
 MATCH (r:Recommendation {recommendationId: 'rec-3'}), (fu:FollowUp {followUpId: 'fu-4'}) MERGE (r)-[:TRACKED_BY]->(fu);
 MATCH (r:Recommendation {recommendationId: 'rec-1'}), (fu:FollowUp {followUpId: 'fu-5'}) MERGE (r)-[:TRACKED_BY]->(fu);
+MATCH (r:Recommendation {recommendationId: 'rec-5'}), (fu:FollowUp {followUpId: 'fu-3'}) MERGE (r)-[:TRACKED_BY]->(fu);
 
 // =====================================================================
 // 28. RELATIONSHIPS — Farmer → Visit

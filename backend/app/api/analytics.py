@@ -1,11 +1,12 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from app.services.neo4j_service import load_query, run_query_flattened
 from app.schemas import (
     PriorityBucket,
     CountyDemandSchema,
 )
+from app.api.deps import require_agent
 
-router = APIRouter(prefix="/api/analytics", tags=["analytics"])
+router = APIRouter(prefix="/api/analytics", tags=["analytics"], dependencies=[Depends(require_agent)])
 
 
 @router.get("/farmer-trend")

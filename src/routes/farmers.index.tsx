@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Filter, MoreHorizontal, Brain, Eye } from "lucide-react";
+import { Filter, Brain, Eye } from "lucide-react";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PriorityBadge } from "@/components/PriorityBadge";
 import { EmptyState } from "@/components/EmptyState";
@@ -83,8 +83,9 @@ function FarmersPage() {
                         <Button asChild variant="ghost" size="icon">
                           <Link to="/farmers/$id" params={{ id: f.id }}><Eye className="size-4" /></Link>
                         </Button>
-                        <Button variant="ghost" size="icon"><Brain className="size-4" /></Button>
-                        <Button variant="ghost" size="icon"><MoreHorizontal className="size-4" /></Button>
+                        <Button asChild variant="ghost" size="icon">
+                          <Link to="/intelligence"><Brain className="size-4" /></Link>
+                        </Button>
                       </div>
                     </td>
                   </tr>

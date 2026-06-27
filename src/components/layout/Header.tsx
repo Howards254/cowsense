@@ -22,11 +22,18 @@ export function Header() {
         <div className="flex min-w-0 items-center gap-3">
           <div className="relative w-full max-w-md">
             <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder="Search farmers, recommendations, inputs…" className="pl-9 h-9 bg-muted/40 border-transparent focus-visible:bg-background" />
+            <Input
+              placeholder="Search farmers, recommendations, inputs…"
+              className="pl-9 h-9 bg-muted/40 border-transparent focus-visible:bg-background"
+            />
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <Button size="sm" className="hidden sm:inline-flex gap-1.5">
+          <Button
+            size="sm"
+            className="hidden sm:inline-flex gap-1.5"
+            onClick={() => navigate({ to: "/visits" })}
+          >
             <Plus className="size-4" /> New visit
           </Button>
           <Button variant="ghost" size="icon" className="relative">
@@ -36,14 +43,23 @@ export function Header() {
           <div className="flex items-center gap-2 pl-2 border-l border-border">
             <Avatar className="size-8">
               <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                {name.split(" ").map(n => n[0]).join("")}
+                {name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")}
               </AvatarFallback>
             </Avatar>
             <div className="hidden md:block leading-tight">
               <div className="text-sm font-medium">{name}</div>
               {org && <div className="text-[11px] text-muted-foreground">{org}</div>}
             </div>
-            <Button variant="ghost" size="icon" onClick={handleLogout} className="ml-1" title="Sign out">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleLogout}
+              className="ml-1"
+              title="Sign out"
+            >
               <LogOut className="size-4" />
             </Button>
           </div>

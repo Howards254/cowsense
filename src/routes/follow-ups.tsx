@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Calendar, List, Clock, CheckCircle2, AlertCircle } from "lucide-react";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -15,8 +15,13 @@ export const Route = createFileRoute("/follow-ups")({
 });
 
 function FollowUpsPage() {
+  const queryClient = useQueryClient();
   const { data: followUps = [] } = useQuery({ queryKey: ["followups"], queryFn: () => followupService.list() });
   const [view, setView] = useState<"list" | "timeline">("list");
+  const completeMutation = useMutation({
+    mutationFn: (id: string) => followupService.complete(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["followups"] }),
+  });
   const upcoming = followUps.filter(f => f.status === "scheduled").length;
   const overdue = followUps.filter(f => f.status === "overdue").length;
   const completed = followUps.filter(f => f.status === "completed").length;
@@ -51,7 +56,7 @@ function FollowUpsPage() {
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <span className={cn("text-xs px-2 py-0.5 rounded", f.status === "overdue" && "bg-destructive/10 text-destructive", f.status === "completed" && "bg-secondary/30 text-secondary-foreground", f.status === "scheduled" && "bg-primary/10 text-primary")}>{relativeDay(f.dueDate)}</span>
-                <Button size="sm" variant="ghost">Complete</Button>
+                <Button size="sm" variant="ghost" onClick={() => completeMutation.mutate(f.id)} disabled={completeMutation.isPending}>{completeMutation.isPending ? "..." : "Complete"}</Button>
               </div>
             </div>
           ))}

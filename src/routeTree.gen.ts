@@ -9,11 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as SignupRouteImport } from './routes/signup'
 import { Route as VisitsRouteImport } from './routes/visits'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RecommendationsRouteImport } from './routes/recommendations'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as IntelligenceRouteImport } from './routes/intelligence'
 import { Route as InputsRouteImport } from './routes/inputs'
 import { Route as FollowUpsRouteImport } from './routes/follow-ups'
@@ -23,19 +23,14 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as FarmersIndexRouteImport } from './routes/farmers.index'
 import { Route as FarmersIdRouteImport } from './routes/farmers.$id'
 
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const VisitsRoute = VisitsRouteImport.update({
+  id: '/visits',
+  path: '/visits',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VisitsRoute = VisitsRouteImport.update({
-  id: '/visits',
-  path: '/visits',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -46,6 +41,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const RecommendationsRoute = RecommendationsRouteImport.update({
   id: '/recommendations',
   path: '/recommendations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IntelligenceRoute = IntelligenceRouteImport.update({
@@ -197,11 +197,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
+    '/visits': {
+      id: '/visits'
+      path: '/visits'
+      fullPath: '/visits'
+      preLoaderRoute: typeof VisitsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -209,13 +209,6 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/visits': {
-      id: '/visits'
-      path: '/visits'
-      fullPath: '/visits'
-      preLoaderRoute: typeof VisitsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -230,6 +223,13 @@ declare module '@tanstack/react-router' {
       path: '/recommendations'
       fullPath: '/recommendations'
       preLoaderRoute: typeof RecommendationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/intelligence': {

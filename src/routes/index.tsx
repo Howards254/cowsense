@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
   AlertTriangle, CalendarClock, Lightbulb, Package, Users, Droplets,
-  TrendingUp, ArrowRight, Brain,
+  TrendingUp, ArrowRight, Brain, CloudSun,
 } from "lucide-react";
 import {
   PieChart, Pie, Cell, ResponsiveContainer, AreaChart, Area, XAxis, YAxis,
@@ -18,6 +18,8 @@ import { followupService } from "@/services/followupService";
 import { recommendationService } from "@/services/recommendationService";
 import { farmerService } from "@/services/farmerService";
 import { relativeDay } from "@/lib/format";
+import { useAuth } from "@/lib/auth";
+import { intelligenceService } from "@/services/intelligenceService";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -32,6 +34,10 @@ export const Route = createFileRoute("/")({
 const PRIORITY_COLORS = ["hsl(0 70% 55%)", "hsl(35 85% 55%)", "hsl(178 55% 35%)", "hsl(220 10% 65%)"];
 
 function DashboardPage() {
+  const { user } = useAuth();
+  const firstName = user?.fullName?.split(" ")[0] ?? "Agent";
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
   const { data: stats } = useQuery({ queryKey: ["dashboard", "stats"], queryFn: () => dashboardService.getStats() });
   const { data: priorityDist } = useQuery({ queryKey: ["dashboard", "priority"], queryFn: () => dashboardService.getPriorityDistribution() });
   const { data: farmerTrend } = useQuery({ queryKey: ["dashboard", "farmerTrend"], queryFn: () => dashboardService.getFarmerTrend() });
@@ -45,10 +51,15 @@ function DashboardPage() {
   const todays = followUps.filter(f => f.status !== "completed").slice(0, 4);
   const recentRecs = recommendations.slice(0, 3);
   const urgent = farmers.filter(f => f.priority === "critical" || f.priority === "high").slice(0, 4);
+  const { data: weather } = useQuery({
+    queryKey: ["weather"],
+    queryFn: () => intelligenceService.weather(),
+    staleTime: 300_000,
+  });
 
   return (
     <PageContainer
-      title="Good morning, Brian"
+      title={`${greeting}, ${firstName}`}
       description="Here's where your attention is needed today."
       actions={
         <Button asChild>
@@ -126,6 +137,28 @@ function DashboardPage() {
           </AreaChart>
         </ResponsiveContainer>
       </ChartCard>
+
+      {weather && weather.length > 0 && (
+        <div className="mt-4">
+          <h3 className="font-semibold mb-3 flex items-center gap-2">
+            <CloudSun className="size-4 text-primary" /> Weather by county
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {weather.slice(0, 6).map((w) => (
+              <div key={w.county} className="rounded-xl border border-border bg-card p-3 shadow-sm text-center">
+                <div className="text-xs text-muted-foreground capitalize">{w.county}</div>
+                <div className="text-xl font-bold mt-1">{Math.round(w.temperature)}°C</div>
+                <div className="text-xs text-muted-foreground capitalize mt-0.5">{w.condition.replace(/_/g, " ")}</div>
+                {w.climateRisk !== "none" && w.climateRisk !== "low" && (
+                  <div className="text-xs text-destructive flex items-center justify-center gap-1 mt-1">
+                    <AlertTriangle className="size-3" /> {w.climateRisk} risk
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
         <section className="rounded-xl border border-border bg-card shadow-sm">

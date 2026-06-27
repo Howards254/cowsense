@@ -62,7 +62,8 @@ def _assess_risk(condition: str, precip: float, temp: float) -> str:
 
 def _mock_weather(county: str) -> dict:
     import random
-    random.seed(hash(county) % (2 ** 32))
+    import zlib
+    random.seed(zlib.adler32(county.encode()))
     temp = round(random.uniform(15, 32), 1)
     humidity = round(random.uniform(40, 90))
     precip = round(random.uniform(0, 15), 1)
@@ -183,8 +184,6 @@ async def get_weather_for_all_counties() -> list[dict]:
 
 
 def get_climate_risk_for_county(county: str) -> dict:
-    import random
-    random.seed(hash(county) % (2 ** 32))
     risks = {
         "Kiambu": {"drought": False, "flood": True, "heatwave": False},
         "Nakuru": {"drought": False, "flood": False, "heatwave": True},

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import (
     farmers,
@@ -11,6 +11,7 @@ from app.api import (
 )
 from app.services.neo4j_service import load_query, run_query_flattened
 from app.schemas import DashboardStatsSchema
+from app.api.deps import require_agent
 
 app = FastAPI(title="CowSense AI")
 
@@ -51,14 +52,15 @@ def health():
 
 
 @app.get("/api/dashboard")
-def dashboard_full():
+def dashboard_full(_agent: dict = Depends(require_agent)):
     stats_query = load_query("dashboard.stats")
     priority_query = load_query("dashboard.priorityDistribution")
     farmer_trend_query = load_query("dashboard.farmerTrend")
     input_demand_query = load_query("dashboard.inputDemandTrend")
     county_demand_query = load_query("dashboard.countyDemand")
 
-    stats = DashboardStatsSchema(**run_query_flattened(stats_query)[0]).model_dump()
+    stats_data = run_query_flattened(stats_query)
+    stats = DashboardStatsSchema(**stats_data[0]).model_dump() if stats_data else {}
     priority = run_query_flattened(priority_query)
     farmer_trend = run_query_flattened(farmer_trend_query)
     input_demand = run_query_flattened(input_demand_query)
@@ -74,14 +76,14 @@ def dashboard_full():
 
 
 @app.get("/api/agent")
-def get_agent():
+def get_agent(_agent: dict = Depends(require_agent)):
     query = load_query("analytics.extensionAgent")
     results = run_query_flattened(query)
     return results[0] if results else {}
 
 
 @app.get("/api/intelligence/urgent")
-def get_urgent_farmer_intelligence():
+def get_urgent_farmer_intelligence(_agent: dict = Depends(require_agent)):
     query = load_query("intelligence.farmerUrgent")
     results = run_query_flattened(query)
     return results[0] if results else {}
@@ -97,12 +99,12 @@ from app.agents.followup_agent import generate_followups, generate_all_pending_f
 
 
 @app.get("/api/agent/prioritization")
-def agent_prioritization_list():
+def agent_prioritization_list(_agent: dict = Depends(require_agent)):
     return get_priority_list()
 
 
 @app.get("/api/agent/prioritization/{farmer_id}")
-async def agent_prioritization_reasoning(farmer_id: str):
+async def agent_prioritization_reasoning(farmer_id: str, _agent: dict = Depends(require_agent)):
     result = await get_prioritization_reasoning(farmer_id)
     if not result:
         raise HTTPException(404, "Farmer not found")
@@ -110,7 +112,7 @@ async def agent_prioritization_reasoning(farmer_id: str):
 
 
 @app.get("/api/agent/recommendations/{farmer_id}")
-def agent_farmer_recommendations(farmer_id: str):
+def agent_farmer_recommendations(farmer_id: str, _agent: dict = Depends(require_agent)):
     result = generate_recommendations(farmer_id)
     if not result:
         raise HTTPException(404, "Farmer not found")
@@ -118,17 +120,17 @@ def agent_farmer_recommendations(farmer_id: str):
 
 
 @app.get("/api/agent/recommendations")
-def agent_all_recommendations():
+def agent_all_recommendations(_agent: dict = Depends(require_agent)):
     return generate_all_recommendations()
 
 
 @app.get("/api/agent/followups/{farmer_id}")
-def agent_farmer_followups(farmer_id: str):
+def agent_farmer_followups(farmer_id: str, _agent: dict = Depends(require_agent)):
     return generate_followups(farmer_id)
 
 
 @app.get("/api/agent/followups")
-def agent_all_followups():
+def agent_all_followups(_agent: dict = Depends(require_agent)):
     return generate_all_pending_followups()
 
 
@@ -146,7 +148,7 @@ from app.services.input_demand_service import (
 
 
 @app.get("/api/agent/input-demand")
-def agent_input_demand():
+def agent_input_demand(_agent: dict = Depends(require_agent)):
     by_county = get_input_demand_by_county()
     total = augment_inputs_with_trend(get_total_input_demand())
     summary = get_county_input_summary()
@@ -158,12 +160,12 @@ def agent_input_demand():
 
 
 @app.get("/api/agent/input-demand/high-demand")
-def agent_high_demand_inputs():
+def agent_high_demand_inputs(_agent: dict = Depends(require_agent)):
     return augment_inputs_with_trend(get_high_demand_inputs())
 
 
 @app.get("/api/agent/input-demand/county/{county}")
-def agent_input_demand_by_county(county: str):
+def agent_input_demand_by_county(county: str, _agent: dict = Depends(require_agent)):
     results = get_input_demand_by_county()
     filtered = [r for r in results if r.get("county", "").lower() == county.lower()]
     county_summary = get_county_input_summary()
@@ -184,20 +186,20 @@ from app.services.weather_service import (
 
 
 @app.get("/api/agent/weather")
-async def agent_all_weather():
+async def agent_all_weather(_agent: dict = Depends(require_agent)):
     return await get_weather_for_all_counties()
 
 
 @app.get("/api/agent/weather/{county}")
-async def agent_county_weather(county: str):
+async def agent_county_weather(county: str, _agent: dict = Depends(require_agent)):
     return await get_current_weather(county)
 
 
 @app.get("/api/agent/climate-risks")
-def agent_climate_risks():
+def agent_climate_risks(_agent: dict = Depends(require_agent)):
     return get_all_climate_risks()
 
 
 @app.get("/api/agent/climate-risks/{county}")
-def agent_county_climate_risk(county: str):
+def agent_county_climate_risk(county: str, _agent: dict = Depends(require_agent)):
     return get_climate_risk_for_county(county)

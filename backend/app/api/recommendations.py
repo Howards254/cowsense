@@ -1,8 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from app.services.neo4j_service import load_query, run_query_flattened
 from app.schemas import RecommendationSchema
+from app.api.deps import require_agent
 
-router = APIRouter(prefix="/api/recommendations", tags=["recommendations"])
+router = APIRouter(prefix="/api/recommendations", tags=["recommendations"], dependencies=[Depends(require_agent)])
 
 
 @router.get("")

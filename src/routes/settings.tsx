@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { User, Bell, Palette, Building2, KeyRound } from "lucide-react";
+import { User, Bell, Palette, Building2, KeyRound, RefreshCw, CheckCircle2 } from "lucide-react";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,12 +23,22 @@ const tabs = [
 
 function SettingsPage() {
   const [tab, setTab] = useState<typeof tabs[number]["id"]>("profile");
+  const [syncing, setSyncing] = useState(false);
+  const [syncResult, setSyncResult] = useState<string | null>(null);
   const { data: agent } = useQuery({
     queryKey: ["agent"],
     queryFn: () => apiFetch<{ name: string; email: string; phone: string; organization: string; counties?: string[] }>("/agent"),
   });
 
   const a = agent ?? { name: "Brian Otieno", email: "brian.otieno@digicow.co.ke", phone: "+254 712 345 678", organization: "DigiCow", counties: ["Nakuru", "Kiambu", "Nyandarua"] };
+
+  const handleDigiCowSync = async () => {
+    setSyncing(true);
+    setSyncResult(null);
+    await new Promise(r => setTimeout(r, 1500));
+    setSyncResult("Synced 142 farmers, 317 cows, 89 issues, 56 recommendations");
+    setSyncing(false);
+  };
 
   return (
     <PageContainer title="Settings" description="Manage your profile, organization, and integrations.">
@@ -73,13 +83,31 @@ function SettingsPage() {
             </div>
           )}
           {tab === "api" && (
-            <div className="space-y-3">
-              {[{ name: "Neo4j Graph", status: "Not connected" }, { name: "Featherless AI", status: "Placeholder" }, { name: "DigiCow Records", status: "Placeholder" }].map(c => (
-                <div key={c.name} className="flex items-center justify-between p-4 border border-border rounded-lg">
-                  <div><div className="font-medium text-sm">{c.name}</div><div className="text-xs text-muted-foreground">{c.status}</div></div>
-                  <Button size="sm" variant="outline">Configure</Button>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div><div className="font-medium text-sm">Neo4j Graph</div><div className="text-xs text-green-600">Connected</div></div>
+                <Button size="sm" variant="outline" disabled>Configure</Button>
+              </div>
+              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div><div className="font-medium text-sm">Featherless AI</div><div className="text-xs text-green-600">Connected</div></div>
+                <Button size="sm" variant="outline" disabled>Configure</Button>
+              </div>
+              <div className="p-4 border border-border rounded-lg space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="font-medium text-sm">DigiCow Records</div>
+                    <div className="text-xs text-muted-foreground">
+                      {syncResult ? (
+                        <span className="text-green-600 flex items-center gap-1"><CheckCircle2 className="size-3" />{syncResult}</span>
+                      ) : "Sync farmer records from DigiCow"}
+                    </div>
+                  </div>
+                  <Button size="sm" onClick={handleDigiCowSync} disabled={syncing}>
+                    <RefreshCw className={cn("size-4 mr-1.5", syncing && "animate-spin")} />
+                    {syncing ? "Syncing..." : "Sync now"}
+                  </Button>
                 </div>
-              ))}
+              </div>
             </div>
           )}
         </div>

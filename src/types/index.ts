@@ -133,3 +133,58 @@ export interface CountyDemand {
   demand: number;
   farmers: number;
 }
+
+export interface IntelligentFarmer {
+  id: string;
+  name: string;
+  county: string;
+  farmSizeAcres: number;
+  dairyExperienceYears: number;
+  priorityScore: number;
+  avgMilkLitres: number;
+  adoptionScore: number;
+}
+
+export interface UrgentIntelligence {
+  farmer: IntelligentFarmer;
+  issues: (Issue & { name?: string })[];
+  diseases: { id: string; name: string; riskLevel: string; riskScore: number }[];
+  recommendations: { id: string; title: string; priority: Priority; status: string; expectedOutcome: string }[];
+  production: ProductionMetric[];
+}
+
+export interface PrioritizationReasoning {
+  farmerId: string;
+  farmerName: string;
+  priority: Priority;
+  priorityScore: number;
+  reasoning: string;
+  factors: string[];
+}
+
+export interface InputDemandItem {
+  county: string;
+  inputId: string;
+  inputName: string;
+  demandCount: number;
+}
+
+export interface TotalInputDemand {
+  inputId: string;
+  inputName: string;
+  category: string;
+  totalDemand: number;
+  trend: "up" | "down" | "stable";
+}
+
+export interface CountyInputSummary {
+  county: string;
+  demand: number;
+  farmers: number;
+}
+
+export interface InputDemandResponse {
+  byCounty: InputDemandItem[];
+  totalDemand: TotalInputDemand[];
+  countySummary: CountyInputSummary[];
+}

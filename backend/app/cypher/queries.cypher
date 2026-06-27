@@ -179,7 +179,7 @@ ORDER BY value DESC;
 
 
 // --- dashboard.farmerTrend ---
-// Farmer activity trend computed from production metric dates.
+// Farmer activity trend computed from production metrics.
 // Params: none
 // Returns: [{week, active, flagged}]
 MATCH (pm:ProductionMetric)
@@ -187,10 +187,17 @@ WITH pm.dateRecorded AS d
 ORDER BY d
 WITH collect(DISTINCT d) AS dates
 UNWIND range(0, size(dates)-1) AS idx
+WITH dates[idx] AS weekDate, idx
+OPTIONAL MATCH (f:Farmer)-[:HAS_PRODUCTION]->(pm2:ProductionMetric)
+WHERE pm2.dateRecorded = weekDate
+WITH weekDate, idx, count(DISTINCT f) AS activeCount
+OPTIONAL MATCH (f2:Farmer)-[e:EXPERIENCING]->(i:Issue)
+WHERE e.detectedAt <= weekDate AND e.status = 'open'
+WITH weekDate, idx, activeCount, count(DISTINCT f2) AS flaggedCount
 RETURN {
   week: 'W' + toString(idx + 1),
-  active: toInteger(rand() * 15 + 85 + idx * 2),
-  flagged: toInteger(rand() * 5 + 10 + idx)
+  active: activeCount,
+  flagged: flaggedCount
 } AS result
 ORDER BY idx;
 
@@ -210,12 +217,13 @@ RETURN {
 
 
 // --- dashboard.countyDemand ---
-// Farmer count and demand per county.
+// Farmer count and input demand per county.
 // Params: none
 // Returns: [{county, demand, farmers}]
 MATCH (f:Farmer)
-WITH f.county AS county, count(f) AS farmers
-RETURN {county: county, farmers: farmers, demand: farmers * 5} AS data
+OPTIONAL MATCH (f)-[:HAS_RECOMMENDATION]->(r:Recommendation)-[:REQUIRES]->(i:Input)
+WITH f.county AS county, count(DISTINCT f) AS farmers, count(i) AS demand
+RETURN {county: county, farmers: farmers, demand: demand} AS data
 ORDER BY farmers DESC;
 
 
@@ -405,10 +413,17 @@ WITH pm.dateRecorded AS d
 ORDER BY d
 WITH collect(DISTINCT d) AS dates
 UNWIND range(0, size(dates)-1) AS idx
+WITH dates[idx] AS weekDate, idx
+OPTIONAL MATCH (f:Farmer)-[:HAS_PRODUCTION]->(pm2:ProductionMetric)
+WHERE pm2.dateRecorded = weekDate
+WITH weekDate, idx, count(DISTINCT f) AS activeCount
+OPTIONAL MATCH (f2:Farmer)-[e:EXPERIENCING]->(i:Issue)
+WHERE e.detectedAt <= weekDate AND e.status = 'open'
+WITH weekDate, idx, activeCount, count(DISTINCT f2) AS flaggedCount
 RETURN {
   week: 'W' + toString(idx + 1),
-  active: toInteger(rand() * 15 + 85 + idx * 2),
-  flagged: toInteger(rand() * 5 + 10 + idx)
+  active: activeCount,
+  flagged: flaggedCount
 } AS result
 ORDER BY idx;
 
@@ -434,9 +449,11 @@ RETURN {
 // Returns: [{month, adopted, issued}]
 MATCH (r:Recommendation)
 WITH count(r) AS total
+OPTIONAL MATCH (a:AdoptionRecord)
+WITH total, count(a) AS adopted
 RETURN {
   month: 'Total',
-  adopted: toInteger(total / 2),
+  adopted: adopted,
   issued: total
 } AS result;
 
