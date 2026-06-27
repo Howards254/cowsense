@@ -26,7 +26,10 @@ function AuthGuard({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (loading) return;
-    const isPublic = location.pathname === "/" || PUBLIC_PATHS.has(location.pathname) || [...PUBLIC_PATHS].some((p) => p !== "/" && location.pathname.startsWith(p));
+    const isPublic =
+      location.pathname === "/" ||
+      PUBLIC_PATHS.has(location.pathname) ||
+      [...PUBLIC_PATHS].some((p) => p !== "/" && location.pathname.startsWith(p));
     if (!user && !isPublic) {
       router.navigate({ to: "/", replace: true });
     }
@@ -141,7 +144,10 @@ function RootShell({ children }: { children: ReactNode }) {
 function AppShell() {
   const { user } = useAuth();
   const location = useLocation();
-  const isPublic = location.pathname === "/" || PUBLIC_PATHS.has(location.pathname) || [...PUBLIC_PATHS].some((p) => p !== "/" && location.pathname.startsWith(p));
+  const isPublic =
+    location.pathname === "/" ||
+    PUBLIC_PATHS.has(location.pathname) ||
+    [...PUBLIC_PATHS].some((p) => p !== "/" && location.pathname.startsWith(p));
 
   if (isPublic) {
     return <Outlet />;
